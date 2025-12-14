@@ -1,0 +1,54 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: CD deployment
+
+on:
+  push:
+    branches: [ "main" ]
+  
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+        
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+        
+    - name: Train the model
+      run: |
+        python run train.py
+        
+    - name: Authentication to Google
+      uses: google-github-action/auth@v2
+      with:
+        credentials_json: ${{secrets.GCP_SA_KEY}}
+        
+    - name: setup-gcloud
+      uses: google-github-action/setup-gcloud@v2
+      with:
+        project_id: ${{secrets.GCP_PROJECT_ID}}
+        
+    - name: build and deploy
+      run: |
+        gcloud builds submit \
+        --tag us-central1-docker.pkg.dev/${{secrets.GCP_PROJECT_ID}}/iris-repo/iris-api
+
+        gcloud runs deploy iris-api \
+        --image us-central1-docker.pkg.dev/${{secrets.GCP_PROJECT_ID}}/iris-repo/iris-api \
+        --region ${{secrets.GCP_REGION}} \
+        --platform managed \
+        --allow-unauthenticated
