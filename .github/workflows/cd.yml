@@ -30,7 +30,7 @@ jobs:
         
     - name: Train the model
       run: |
-        python run train.py
+        python train.py
         
     - name: Authentication to Google
       uses: google-github-actions/auth@v2
