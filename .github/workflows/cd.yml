@@ -33,12 +33,12 @@ jobs:
         python run train.py
         
     - name: Authentication to Google
-      uses: google-github-action/auth@v2
+      uses: google-github-actions/auth@v2
       with:
         credentials_json: ${{secrets.GCP_SA_KEY}}
         
     - name: setup-gcloud
-      uses: google-github-action/setup-gcloud@v2
+      uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: ${{secrets.GCP_PROJECT_ID}}
         
