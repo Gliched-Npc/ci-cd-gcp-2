@@ -47,8 +47,9 @@ jobs:
         gcloud builds submit \
         --tag us-central1-docker.pkg.dev/${{secrets.GCP_PROJECT_ID}}/iris-repo/iris-api
 
-        gcloud runs deploy iris-api \
+        gcloud run deploy iris-api \
         --image us-central1-docker.pkg.dev/${{secrets.GCP_PROJECT_ID}}/iris-repo/iris-api \
         --region ${{secrets.GCP_REGION}} \
         --platform managed \
         --allow-unauthenticated
+        
